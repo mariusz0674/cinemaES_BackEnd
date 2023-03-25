@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.example.cinemaES.repository.TokenRepository;
 import com.example.cinemaES.repository.UserRepository;
 import com.example.cinemaES.security.JwtService;
-import com.example.cinemaES.security.Token;
+import com.example.cinemaES.entity.RefreshToken;
 import com.example.cinemaES.enums.Role;
 
 
@@ -33,10 +33,14 @@ public class AuthenticationService {
                 .role(Role.DEFAULT)
                 .build();
         var savedUser = repository.save(user);
+
         var jwtToken = jwtService.generateToken(user);
-        saveUserToken(savedUser, jwtToken);
+        var refreshToken = jwtService.generateRefreshToken(user);
+
+//        saveUserToken(savedUser, refreshToken);
         return AuthenticationResponse.builder()
-                .token(jwtToken)
+                .jwttoken(jwtToken)
+                .refreshToken(jwtToken)
                 .build();
     }
 
@@ -45,22 +49,23 @@ public class AuthenticationService {
                 request.getUsername(),
                 request.getPassword()
         );
-
-        authenticationManager.authenticate(
-                temp
-        );
+        authenticationManager.authenticate(temp);
         var user = repository.findByUsername(request.getUsername())
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
         return AuthenticationResponse.builder()
-                .token(jwtToken)
+                .username(user.getUsername())
+                .role(user.getRole().name())
+                .refreshToken(refreshToken)
+                .jwttoken(jwtToken)
                 .build();
     }
 
     private void saveUserToken(User user, String jwtToken) {
-        var token = Token.builder()
+        var token = RefreshToken.builder()
                 .user(user)
                 .token(jwtToken)
                 .tokenType(TokenType.BEARER)
@@ -74,10 +79,24 @@ public class AuthenticationService {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
         if (validUserTokens.isEmpty())
             return;
-        validUserTokens.forEach(token -> {
-            token.setExpired(true);
-            token.setRevoked(true);
+        validUserTokens.forEach(refreshToken -> {
+            refreshToken.setExpired(true);
+            refreshToken.setRevoked(true);
         });
         tokenRepository.saveAll(validUserTokens);
+    }
+
+    public AuthenticationResponse refreshToken(RefreshTokenRequest request) {
+        RefreshToken refreshToken = RefreshToken.builder()
+                .token(request.getRefreshToken())
+                .build();
+        var user = repository.findByUsername(request.getUserName())
+                .orElseThrow();
+        if(jwtService.isRefreshTokenValid(request.getUserName(), refreshToken)){
+            return AuthenticationResponse.builder()
+                    .jwttoken(jwtService.generateToken(user))
+                    .build();
+        }
+       return null;
     }
 }

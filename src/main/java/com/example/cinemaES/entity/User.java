@@ -1,6 +1,5 @@
 package com.example.cinemaES.entity;
 
-import com.example.cinemaES.security.Token;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,11 +29,13 @@ public class User implements UserDetails {
     private String password;
     private String email;
 
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
+
     @OneToMany(mappedBy = "user")
-    private List<Token> tokens;
+    private List<RefreshToken> refreshTokens;
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
