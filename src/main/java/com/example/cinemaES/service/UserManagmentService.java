@@ -4,10 +4,12 @@ import com.example.cinemaES.auth.dto.UserDto;
 import com.example.cinemaES.entity.User;
 import com.example.cinemaES.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Observable;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -25,16 +27,7 @@ public class UserManagmentService {
 
     }
 
-    private UserDto mapToDto(User user) {
-        return UserDto.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .firstname(user.getFirstname())
-                .lastname(user.getLastname())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .build();
-    }
+
 
 
     public Boolean deleteUserById(Integer idToDell) {
@@ -47,4 +40,33 @@ public class UserManagmentService {
         }
 
     }
+
+    public Boolean updateUserRole(UserDto userDto) {
+        User user = userRepository.findByUsername(userDto.getUsername()).orElseThrow( () -> new UsernameNotFoundException( userDto.getUsername()));
+        user.setRole(userDto.getRole());
+        userRepository.save(user);
+        return true;
+    }
+
+    private UserDto mapToDto(User user) {
+        return UserDto.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .firstname(user.getFirstname())
+                .lastname(user.getLastname())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .build();
+    }
+    private User mapDto(UserDto user){
+        return User.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .firstname(user.getFirstname())
+                .lastname(user.getLastname())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .build();
+    }
+
 }

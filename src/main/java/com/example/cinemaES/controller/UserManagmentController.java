@@ -33,5 +33,10 @@ public class UserManagmentController {
         return ResponseEntity.ok(demo);
     }
 
+    @PutMapping("/update")
+    public ResponseEntity<Boolean> updateUserRole(@RequestBody UserDto userDto){
+        return ResponseEntity.ok(userManagmentService.updateUserRole(userDto));
+    }
+
 
 }
