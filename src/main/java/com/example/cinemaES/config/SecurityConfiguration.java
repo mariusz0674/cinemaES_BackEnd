@@ -39,6 +39,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/auth/**")
                 .permitAll()
+                .requestMatchers("/api/v1/**")
+                .permitAll()
                 .requestMatchers("/api/v1/usersmenager").hasRole(String.valueOf(Role.DEFAULT))
                 .anyRequest()
                 .authenticated()
