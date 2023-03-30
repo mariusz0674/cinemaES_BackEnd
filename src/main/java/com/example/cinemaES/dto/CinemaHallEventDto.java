@@ -1,8 +1,5 @@
-package com.example.cinemaES.auth.dto;
+package com.example.cinemaES.dto;
 
-import com.example.cinemaES.entity.Seance;
-import com.example.cinemaES.entity.Seat;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

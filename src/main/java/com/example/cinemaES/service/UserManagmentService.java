@@ -1,6 +1,6 @@
 package com.example.cinemaES.service;
 
-import com.example.cinemaES.auth.dto.UserDto;
+import com.example.cinemaES.dto.UserDto;
 import com.example.cinemaES.entity.User;
 import com.example.cinemaES.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Observable;
 import java.util.Optional;
 import java.util.stream.Collectors;
 

@@ -1,8 +1,7 @@
 package com.example.cinemaES.controller;
 
 
-import com.example.cinemaES.auth.dto.UserDto;
-import com.example.cinemaES.entity.User;
+import com.example.cinemaES.dto.UserDto;
 import com.example.cinemaES.service.UserManagmentService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

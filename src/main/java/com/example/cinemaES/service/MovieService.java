@@ -1,8 +1,7 @@
 package com.example.cinemaES.service;
 
-import com.example.cinemaES.auth.dto.Mapper;
-import com.example.cinemaES.auth.dto.MovieDto;
-import com.example.cinemaES.entity.Movie;
+import com.example.cinemaES.dto.Mapper;
+import com.example.cinemaES.dto.MovieDto;
 import com.example.cinemaES.repository.MovieRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

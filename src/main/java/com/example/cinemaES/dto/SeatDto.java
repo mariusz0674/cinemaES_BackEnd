@@ -1,4 +1,4 @@
-package com.example.cinemaES.auth.dto;
+package com.example.cinemaES.dto;
 
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
