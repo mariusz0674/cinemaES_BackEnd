@@ -1,6 +1,5 @@
-package com.example.cinemaES.security;
+package com.example.cinemaES.entity;
 
-import com.example.cinemaES.entity.User;
 import com.example.cinemaES.enums.TokenType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Token {
+public class RefreshToken {
 
     @Id
     @GeneratedValue

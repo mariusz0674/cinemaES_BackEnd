@@ -9,11 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
-
-    private String username;
-    private String role;
-    private String jwttoken;
+public class RefreshTokenRequest {
     private String refreshToken;
-
+    private String userName;
 }
