@@ -2,9 +2,11 @@ package com.example.cinemaES.demo;
 
 import com.example.cinemaES.entity.*;
 import com.example.cinemaES.enums.AudioLanguage;
+import com.example.cinemaES.enums.Role;
 import com.example.cinemaES.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.sql.Time;
@@ -15,6 +17,7 @@ import java.util.List;
 @Component
 @AllArgsConstructor
 public class DatabaseInitializer implements CommandLineRunner {
+    private final PasswordEncoder passwordEncoder;
 
     private final CinemaHallRepository cinemaHallRepository;
     private final CinemaHallEventRepository cinemaHallEventRepository;
@@ -22,10 +25,57 @@ public class DatabaseInitializer implements CommandLineRunner {
     private final MovieRepository movieRepository;
     private final SeatRepository seatRepository;
     private final SeanceRepository seanceRepository;
-
+    private final UserRepository userRepository;
 
     @Override
     public void run(String... args) throws Exception {
+
+        User user = User.builder()
+                .email("email@o2.pl")
+                .username("admin")
+                .firstname("imie")
+                .lastname("lastnam")
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.ADMIN)
+                .build();
+
+        userRepository.save(user);
+
+
+        User usera = User.builder()
+                .email("email@o2.pl")
+                .username("kasjer")
+                .firstname("imie")
+                .lastname("lastnam")
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.CASHIER)
+                .build();
+
+        userRepository.save(usera);
+
+        User userb = User.builder()
+                .email("email@o2.pl")
+                .username("default")
+                .firstname("imie")
+                .lastname("lastnam")
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.DEFAULT)
+                .build();
+
+        userRepository.save(userb);
+
+        User userc = User.builder()
+                .email("email@o2.pl")
+                .username("administration")
+                .firstname("imie")
+                .lastname("lastnam")
+                .password(passwordEncoder.encode("1234"))
+                .role(Role.ADMINISTRATION)
+                .build();
+
+        userRepository.save(userc);
+
+
         Movie movieA = Movie.builder()
                 .title("Film o mrowkach")
                 .duration(Time.valueOf("02:15:00"))
@@ -46,6 +96,7 @@ public class DatabaseInitializer implements CommandLineRunner {
                 .title("O 12 w Koninie")
                 .duration(Time.valueOf("02:15:00"))
                 .build();
+
         movieRepository.save(movieA);
         movieRepository.save(movieB);
         movieRepository.save(movieC);

@@ -28,18 +28,16 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
 
-    @Transactional
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+    @PostMapping(value = "/register")
+    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
         try{
             service.register(request);
-            return ResponseEntity.ok("Registration successful");
+            return ResponseEntity.ok("Register sucessfull");
         } catch (DataIntegrityViolationException e){
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }  catch (Exception e){
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
-     //   return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {

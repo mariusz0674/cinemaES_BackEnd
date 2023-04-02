@@ -47,7 +47,7 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
 
-//        saveUserToken(savedUser, refreshToken);
+        saveUserToken(savedUser, refreshToken);
         return AuthenticationResponse.builder()
                 .jwttoken(jwtToken)
                 .refreshToken(jwtToken)
