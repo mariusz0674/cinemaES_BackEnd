@@ -47,7 +47,7 @@ public class UserManagmentService {
         return true;
     }
 
-    private UserDto mapToDto(User user) {
+    public UserDto mapToDto(User user) {
         return UserDto.builder()
                 .id(user.getId())
                 .username(user.getUsername())
@@ -57,15 +57,6 @@ public class UserManagmentService {
                 .role(user.getRole())
                 .build();
     }
-    private User mapDto(UserDto user){
-        return User.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .firstname(user.getFirstname())
-                .lastname(user.getLastname())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .build();
-    }
+
 
 }

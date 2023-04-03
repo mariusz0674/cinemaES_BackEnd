@@ -32,47 +32,7 @@ public class SeanceService {
     private final CinemaHallRepository cinemaHallRepository;
     private final CinemaHallEventRepository cinemaHallEventRepository;
    // private final CinemaHallEvent cinemaHallEvent;
-    @SneakyThrows
-    @Transactional
-    public void addDemo() {
-        Movie movie = Movie.builder()
-                .title("Piraci z internetu")
-                .duration(Time.valueOf("02:15:00"))
-                .build();
 
-        movieRepository.save(movie);
-
-        Seat seat1 = Seat.builder()
-                .row(5)
-                .column(6)
-                .isTaken(false)
-                .build();
-        Seat seat2 = Seat.builder()
-                .row(5)
-                .column(7)
-                .isTaken(true)
-                .build();
-        CinemaHallEvent cinemaHallEvent = CinemaHallEvent.builder()
-                .seats(List.of(seat1,seat2))
-                .build();
-
-        Movie moviea = movieRepository.getMovieByTitle("Piraci z internetu").get();
-
-        Seance seance = Seance.builder()
-                .cinemaHallEvent(cinemaHallEvent)
-                .movie(moviea)
-                .subtitle(false)
-                .audioLanguage(AudioLanguage.ENGLISH)
-                .seanceData(new SimpleDateFormat("dd.MM.yyyy HH:mm").parse("25.01.2023 15:45"))
-                .build();
-
-        seat1.setCinemaHallEvent(cinemaHallEvent);
-        seat2.setCinemaHallEvent(cinemaHallEvent);
-        cinemaHallEvent.setSeance(seance);
-        seanceRepository.save(seance);
-
-        return;// seanceRepository.getSeanceByCinemaHallEvent(cinemaHallEvent).get();
-    }
 
     public List<Seance> getAll() {
         List<Seance> seance = seanceRepository.findAll();
@@ -135,9 +95,9 @@ public class SeanceService {
         cinemaHallEvent.setSeats(seats);
         cinemaHallEvent.setSeance(seanceRepository.getSeanceByCinemaHallEvent(cinemaHallEvent).get());
 
-
-
         cinemaHallEventRepository.save(cinemaHallEvent);
         return true;
     }
+
+
 }

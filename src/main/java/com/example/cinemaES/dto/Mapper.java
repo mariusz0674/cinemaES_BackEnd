@@ -38,6 +38,17 @@ public class Mapper {
                 .build();
     }
 
+
+    public static User userToDto(UserDto user){
+        return User.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .firstname(user.getFirstname())
+                .lastname(user.getLastname())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .build();
+    }
 //    public static CinemaHallEvent cinemaHallEventFromDto(CinemaHallEventDto cinemaHallEventDto, Seance){
 //        CinemaHallEvent cinemaHallEvent = new CinemaHallEvent();
 //        List<Seat> seats = new ArrayList<>();
