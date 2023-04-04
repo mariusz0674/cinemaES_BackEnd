@@ -1,7 +1,7 @@
 # CinemaES
 Backend for CinemaES
 Created for practicing practicing and learning new solutions in the Spring environment.
-It uses Spring Security, Hibernate, PostgreSQL, and Jsonwebtoken.
+It uses Spring Security, Hibernate, PostgreSQL, JUnit5, and Jsonwebtoken.
 Roles and privileges were implemented.
 Authentication is done using JWT Token along with its refreshing mechanism.
 
