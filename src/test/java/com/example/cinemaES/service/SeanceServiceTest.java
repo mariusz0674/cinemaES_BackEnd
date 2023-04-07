@@ -1,8 +1,6 @@
 package com.example.cinemaES.service;
 
-import com.example.cinemaES.dto.CinemaHallEventDto;
 import com.example.cinemaES.dto.SeanceDto;
-import com.example.cinemaES.dto.SeatDto;
 import com.example.cinemaES.entity.CinemaHallEvent;
 import com.example.cinemaES.entity.Movie;
 import com.example.cinemaES.entity.Seance;
@@ -15,10 +13,8 @@ import com.example.cinemaES.repository.SeanceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -28,31 +24,23 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 
 public class SeanceServiceTest {
-
     @Mock
-
     private SeanceRepository seanceRepository;
-
     @Mock
     private MovieRepository movieRepository;
-
     @Mock
     private CinemaHallRepository cinemaHallRepository;
-
     @Mock
     private CinemaHallEventRepository cinemaHallEventRepository;
-
     @Mock
     private CinemaHallService cinemaHallEventService;
     @InjectMocks
     private SeanceService seanceService;
-
     private Movie movie;
     private Seat seat1;
     private Seat seat2;

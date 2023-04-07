@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -25,6 +26,10 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(
+        prePostEnabled = true,
+        securedEnabled = true,
+        jsr250Enabled = true)
 public class SecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -39,12 +44,13 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/auth/**")
                 .permitAll()
+                .requestMatchers("/api/v1/seance/getSimpleAll")
+                .permitAll()
                 .requestMatchers("/api-docs/**")
                 .permitAll()
                 .requestMatchers("/docs/**")
                 .permitAll()
                 .requestMatchers("/api/v1/usersmenager/**").hasRole(String.valueOf(Role.ADMIN))
-                .requestMatchers("/api/v1//api/v1/seance/**").hasAnyRole(Role.ADMIN.name(), Role.CASHIER.name(), Role.ATTENDANT.name())
                 .anyRequest()
                 .authenticated()
                 .and()

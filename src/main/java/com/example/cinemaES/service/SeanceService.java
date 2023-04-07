@@ -5,23 +5,19 @@ import com.example.cinemaES.dto.Mapper;
 import com.example.cinemaES.dto.SeanceDto;
 import com.example.cinemaES.dto.SeanceSimpleDto;
 import com.example.cinemaES.entity.CinemaHallEvent;
-import com.example.cinemaES.entity.Movie;
 import com.example.cinemaES.entity.Seance;
 import com.example.cinemaES.entity.Seat;
-import com.example.cinemaES.enums.AudioLanguage;
-import com.example.cinemaES.repository.CinemaHallEventRepository;
-import com.example.cinemaES.repository.CinemaHallRepository;
-import com.example.cinemaES.repository.MovieRepository;
-import com.example.cinemaES.repository.SeanceRepository;
+import com.example.cinemaES.repository.*;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
+import org.hibernate.Session;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.Time;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -56,7 +52,26 @@ public class SeanceService {
         return seanceSimpleDtos;
     }
 
+    private boolean checkIfSeanceExistsInCinemaHall(Date x, Date y, String z) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Seance> criteriaQuery = builder.createQuery(Seance.class);
+            Root<Seance> root = criteriaQuery.from(Seance.class);
+            Join<Seance, CinemaHallEvent> cinemaHallEventJoin = root.join("cinemaHallEvent");
+            criteriaQuery.select(root);
+            criteriaQuery.where(builder.between(root.get("seanceData"), x, y),
+                    builder.equal(cinemaHallEventJoin.get("cinemaHall").get("id"), z));
+            List<Seance> seances = session.createQuery(criteriaQuery).getResultList();
+            return !seances.isEmpty();
+        }
+    }
+    private void checkHallAvailable(SeanceSimpleDto seanceSimpleDto) {
+        if(checkIfSeanceExistsInCinemaHall(seanceSimpleDto.getDate(), Date.from(seanceSimpleDto.getDate().toInstant().plusSeconds(360000)), seanceSimpleDto.getHall_id())){
+            throw new EntityExistsException("Hall is not available at this time");
+        }
+    }
     public Boolean addSeance(SeanceSimpleDto seanceSimpleDto) throws ParseException {
+        checkHallAvailable(seanceSimpleDto);
         CinemaHallEvent cinemaHallEvent = CinemaHallEvent.builder()
                 .cinemaHall(cinemaHallRepository.findById(seanceSimpleDto.getHall_id()).get())
                 .build();

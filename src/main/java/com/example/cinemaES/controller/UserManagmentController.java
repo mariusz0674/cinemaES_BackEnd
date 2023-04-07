@@ -21,6 +21,7 @@ public class UserManagmentController {
         return ResponseEntity.ok(userManagmentService.deleteUserById(userId));
     }
 
+
     @GetMapping("/all")
     public ResponseEntity<List<UserDto>> getAllUsers(){
         return ResponseEntity.ok(userManagmentService.getAllUsers());

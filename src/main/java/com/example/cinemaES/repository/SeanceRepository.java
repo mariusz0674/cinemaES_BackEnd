@@ -10,4 +10,9 @@ import java.util.Optional;
 public interface SeanceRepository extends JpaRepository<Seance, Integer> {
     Optional<Seance> getSeanceByCinemaHallEvent(CinemaHallEvent cinemaHallEvent);
     List<Seance> findAll();
+
+
+
+
+
 }
