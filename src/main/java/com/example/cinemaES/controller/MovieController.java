@@ -4,6 +4,7 @@ package com.example.cinemaES.controller;
 import com.example.cinemaES.dto.MovieDto;
 import com.example.cinemaES.service.MovieService;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,6 @@ import java.util.List;
 public class MovieController {
     private final MovieService movieService;
 
-
     @GetMapping("/getAll")
     public ResponseEntity<List<MovieDto>>getAllMovie(){
         return ResponseEntity.ok(movieService.getAllMovie());
@@ -24,7 +24,7 @@ public class MovieController {
 
     @RolesAllowed(value = {"ADMIN", "ADMINISTRATION"})
     @PostMapping("/add")
-    public ResponseEntity<Boolean> addMovie(@RequestBody MovieDto movieDto){
+    public ResponseEntity<Boolean> addMovie(@Valid @RequestBody MovieDto movieDto){
         return ResponseEntity.ok(movieService.saveMovie(movieDto));
     }
 

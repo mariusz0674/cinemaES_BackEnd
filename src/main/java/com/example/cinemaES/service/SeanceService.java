@@ -17,7 +17,6 @@ import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
-import java.text.ParseException;
 import java.util.*;
 
 @Service
@@ -70,7 +69,7 @@ public class SeanceService {
             throw new EntityExistsException("Hall is not available at this time");
         }
     }
-    public Boolean addSeance(SeanceSimpleDto seanceSimpleDto) throws ParseException {
+    public Boolean addSeance(SeanceSimpleDto seanceSimpleDto){
         checkHallAvailable(seanceSimpleDto);
         CinemaHallEvent cinemaHallEvent = CinemaHallEvent.builder()
                 .cinemaHall(cinemaHallRepository.findById(seanceSimpleDto.getHall_id()).get())

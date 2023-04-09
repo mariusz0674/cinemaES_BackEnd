@@ -6,11 +6,11 @@ import com.example.cinemaES.dto.SeanceSimpleDto;
 import com.example.cinemaES.entity.Seance;
 import com.example.cinemaES.service.SeanceService;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -37,7 +37,7 @@ public class SeanceController {
     }
     @RolesAllowed(value = {"ADMIN", "ADMINISTRATION"})
     @PostMapping("/add")
-    public ResponseEntity<Boolean>addSeance(@RequestBody SeanceSimpleDto seanceSimpleDto) throws ParseException {
+    public ResponseEntity<Boolean>addSeance(@Valid @RequestBody SeanceSimpleDto seanceSimpleDto) {
         return ResponseEntity.ok(seanceService.addSeance(seanceSimpleDto));
     }
 

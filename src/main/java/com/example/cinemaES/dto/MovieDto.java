@@ -1,6 +1,7 @@
 package com.example.cinemaES.dto;
 
-import com.example.cinemaES.enums.AudioLanguage;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,10 @@ import java.sql.Time;
 @NoArgsConstructor
 @Builder
 public class MovieDto {
+
+    @NotBlank(message = "Movie title is mandatory")
     private String title;
+    @NotNull(message = "Movie duration is mandatory")
     private Time duration;
 
 }

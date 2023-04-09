@@ -35,8 +35,8 @@ public class User implements UserDetails {
     private Role role;
 
 
-    @OneToMany(mappedBy = "user")
-    private List<RefreshToken> refreshTokens;
+    @OneToOne(optional = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private RefreshToken refreshToken;
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

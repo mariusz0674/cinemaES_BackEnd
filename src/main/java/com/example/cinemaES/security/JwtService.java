@@ -1,9 +1,7 @@
 package com.example.cinemaES.security;
 
-import com.example.cinemaES.entity.RefreshToken;
 import com.example.cinemaES.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -53,7 +51,7 @@ public class JwtService {
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + 10 * 60 * 24))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -63,7 +61,7 @@ public class JwtService {
                 .builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 100000 * 60 * 25))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000000 * 60 * 25))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -97,17 +95,19 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public boolean isRefreshTokenValid(String userName, RefreshToken refreshToken) {
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
-
-//        Optional<RefreshToken> tokenFromRepo = tokenRepository.findByToken(refreshToken.getToken());
-//        tokenFromRepo.get().getUser()
+    public boolean isRefreshTokenValid(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+//        UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
 //
-
-        if (isTokenValid(refreshToken.getToken(), userDetails )){
-
-            return true;
-        }
-        return false;
+////        Optional<RefreshToken> tokenFromRepo = tokenRepository.findByToken(refreshToken.getToken());
+////        tokenFromRepo.get().getUser()
+////
+//
+//        if (isTokenValid(refreshToken.getToken(), userDetails )){
+//
+//            return true;
+//        }
+//        return false;
     }
 }
