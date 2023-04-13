@@ -8,6 +8,7 @@ Authentication is done using JWT Token along with its refreshing mechanism.
 The application is currently under development. 
 
 ![Alt Text](https://github.com/mariusz0674/cinemaES_BackEnd/blob/master/Hibernate.bmp)
+
 ![Alt Text](https://github.com/mariusz0674/cinemaES_BackEnd/blob/master/screencapture-localhost-8081-docs-swagger-ui-index-html-2023-04-03-20_47_50.png)
 
 
