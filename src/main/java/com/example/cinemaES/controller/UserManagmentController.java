@@ -1,6 +1,4 @@
 package com.example.cinemaES.controller;
-
-
 import com.example.cinemaES.dto.UserDto;
 import com.example.cinemaES.service.UserManagmentService;
 import jakarta.validation.Valid;
@@ -8,7 +6,6 @@ import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController

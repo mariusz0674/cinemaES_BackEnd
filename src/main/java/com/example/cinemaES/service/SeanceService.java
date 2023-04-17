@@ -1,5 +1,4 @@
 package com.example.cinemaES.service;
-
 import com.example.cinemaES.dto.CinemaHallEventDto;
 import com.example.cinemaES.dto.Mapper;
 import com.example.cinemaES.dto.SeanceDto;

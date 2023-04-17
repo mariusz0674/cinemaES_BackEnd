@@ -1,5 +1,4 @@
 package com.example.cinemaES.auth;
-
 import com.example.cinemaES.entity.User;
 import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;

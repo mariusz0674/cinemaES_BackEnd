@@ -1,8 +1,6 @@
 package com.example.cinemaES.repository;
-
 import com.example.cinemaES.entity.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.Optional;
 
 public interface TokenRepository extends JpaRepository<RefreshToken, Integer> {
@@ -15,6 +13,6 @@ public interface TokenRepository extends JpaRepository<RefreshToken, Integer> {
 //    List<RefreshToken> findAllValidTokenByUser(Integer id);
 
     Optional<RefreshToken> findByToken(String refreshToken);
-    void deleteByToken(String refreshToken);
+//    void deleteByToken(String refreshToken);
     void delete(RefreshToken refreshToken);
 }

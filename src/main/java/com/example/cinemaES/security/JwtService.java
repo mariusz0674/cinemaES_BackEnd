@@ -1,5 +1,4 @@
 package com.example.cinemaES.security;
-
 import com.example.cinemaES.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -10,7 +9,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;

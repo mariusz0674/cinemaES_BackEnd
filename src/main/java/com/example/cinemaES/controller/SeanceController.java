@@ -1,5 +1,4 @@
 package com.example.cinemaES.controller;
-
 import com.example.cinemaES.dto.CinemaHallEventDto;
 import com.example.cinemaES.dto.SeanceDto;
 import com.example.cinemaES.dto.SeanceSimpleDto;
@@ -10,7 +9,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
