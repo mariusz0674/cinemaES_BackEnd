@@ -3,6 +3,7 @@ import com.example.cinemaES.dto.CinemaHallEventDto;
 import com.example.cinemaES.dto.Mapper;
 import com.example.cinemaES.dto.SeanceDto;
 import com.example.cinemaES.dto.SeanceSimpleDto;
+import com.example.cinemaES.entity.CinemaHall;
 import com.example.cinemaES.entity.CinemaHallEvent;
 import com.example.cinemaES.entity.Seance;
 import com.example.cinemaES.entity.Seat;
@@ -68,11 +69,34 @@ public class SeanceService {
             throw new EntityExistsException("Hall is not available at this time");
         }
     }
+
+
+    private CinemaHallEvent setSeats(CinemaHallEvent cinemaHallEvent, CinemaHall cinemaHall) {
+        String[] words = cinemaHall.getSeatsSet().split(" ");
+        List<Seat> seatlist = new ArrayList<>();
+
+        for (int k = 0; k < words.length; k++) {
+            for (int i = 0; i < words[k].length(); i++) {
+                if('X' == words[k].charAt(i)){
+                    seatlist.add(Seat.builder()
+                            .row(k)
+                            .column(i)
+                            .cinemaHallEvent(cinemaHallEvent)
+                            .isTaken(((k+i)%3 == 0)? false : true)
+                            .build());
+                }
+            }
+        }
+        cinemaHallEvent.setSeats(seatlist);
+        return cinemaHallEvent;
+    }
     public Boolean addSeance(SeanceSimpleDto seanceSimpleDto){
         checkHallAvailable(seanceSimpleDto);
+        CinemaHall cinemaHall = cinemaHallRepository.findById(seanceSimpleDto.getHall_id()).get();
         CinemaHallEvent cinemaHallEvent = CinemaHallEvent.builder()
-                .cinemaHall(cinemaHallRepository.findById(seanceSimpleDto.getHall_id()).get())
+                .cinemaHall(cinemaHall)
                 .build();
+        setSeats(cinemaHallEvent, cinemaHall);
         Seance seance = Seance.builder()
                // .id(seanceSimpleDto.getId())
                 .seanceData(seanceSimpleDto.getDate())
