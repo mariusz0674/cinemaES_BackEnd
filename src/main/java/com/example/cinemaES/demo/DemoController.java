@@ -24,7 +24,7 @@ public class DemoController {
     public ResponseEntity<String> sayHello() {
         ArrayList<String> demo = new ArrayList<>();
         demo.add("esloo");
-        seanceService.addDemo();
+        //seanceService.addDemo();
         return ResponseEntity.ok("elo");
     }
 

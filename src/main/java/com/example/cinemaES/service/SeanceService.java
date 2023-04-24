@@ -1,27 +1,22 @@
 package com.example.cinemaES.service;
-
 import com.example.cinemaES.dto.CinemaHallEventDto;
 import com.example.cinemaES.dto.Mapper;
 import com.example.cinemaES.dto.SeanceDto;
 import com.example.cinemaES.dto.SeanceSimpleDto;
+import com.example.cinemaES.entity.CinemaHall;
 import com.example.cinemaES.entity.CinemaHallEvent;
-import com.example.cinemaES.entity.Movie;
 import com.example.cinemaES.entity.Seance;
 import com.example.cinemaES.entity.Seat;
-import com.example.cinemaES.enums.AudioLanguage;
-import com.example.cinemaES.repository.CinemaHallEventRepository;
-import com.example.cinemaES.repository.CinemaHallRepository;
-import com.example.cinemaES.repository.MovieRepository;
-import com.example.cinemaES.repository.SeanceRepository;
+import com.example.cinemaES.repository.*;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
+import org.hibernate.Session;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.Time;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -32,47 +27,7 @@ public class SeanceService {
     private final CinemaHallRepository cinemaHallRepository;
     private final CinemaHallEventRepository cinemaHallEventRepository;
    // private final CinemaHallEvent cinemaHallEvent;
-    @SneakyThrows
-    @Transactional
-    public void addDemo() {
-        Movie movie = Movie.builder()
-                .title("Piraci z internetu")
-                .duration(Time.valueOf("02:15:00"))
-                .build();
 
-        movieRepository.save(movie);
-
-        Seat seat1 = Seat.builder()
-                .row(5)
-                .column(6)
-                .isTaken(false)
-                .build();
-        Seat seat2 = Seat.builder()
-                .row(5)
-                .column(7)
-                .isTaken(true)
-                .build();
-        CinemaHallEvent cinemaHallEvent = CinemaHallEvent.builder()
-                .seats(List.of(seat1,seat2))
-                .build();
-
-        Movie moviea = movieRepository.getMovieByTitle("Piraci z internetu").get();
-
-        Seance seance = Seance.builder()
-                .cinemaHallEvent(cinemaHallEvent)
-                .movie(moviea)
-                .subtitle(false)
-                .audioLanguage(AudioLanguage.ENGLISH)
-                .seanceData(new SimpleDateFormat("dd.MM.yyyy HH:mm").parse("25.01.2023 15:45"))
-                .build();
-
-        seat1.setCinemaHallEvent(cinemaHallEvent);
-        seat2.setCinemaHallEvent(cinemaHallEvent);
-        cinemaHallEvent.setSeance(seance);
-        seanceRepository.save(seance);
-
-        return;// seanceRepository.getSeanceByCinemaHallEvent(cinemaHallEvent).get();
-    }
 
     public List<Seance> getAll() {
         List<Seance> seance = seanceRepository.findAll();
@@ -96,10 +51,52 @@ public class SeanceService {
         return seanceSimpleDtos;
     }
 
-    public Boolean addSeance(SeanceSimpleDto seanceSimpleDto) throws ParseException {
+    private boolean checkIfSeanceExistsInCinemaHall(Date x, Date y, String z) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Seance> criteriaQuery = builder.createQuery(Seance.class);
+            Root<Seance> root = criteriaQuery.from(Seance.class);
+            Join<Seance, CinemaHallEvent> cinemaHallEventJoin = root.join("cinemaHallEvent");
+            criteriaQuery.select(root);
+            criteriaQuery.where(builder.between(root.get("seanceData"), x, y),
+                    builder.equal(cinemaHallEventJoin.get("cinemaHall").get("id"), z));
+            List<Seance> seances = session.createQuery(criteriaQuery).getResultList();
+            return !seances.isEmpty();
+        }
+    }
+    private void checkHallAvailable(SeanceSimpleDto seanceSimpleDto) {
+        if(checkIfSeanceExistsInCinemaHall(seanceSimpleDto.getDate(), Date.from(seanceSimpleDto.getDate().toInstant().plusSeconds(360000)), seanceSimpleDto.getHall_id())){
+            throw new EntityExistsException("Hall is not available at this time");
+        }
+    }
+
+
+    private CinemaHallEvent setSeats(CinemaHallEvent cinemaHallEvent, CinemaHall cinemaHall) {
+        String[] words = cinemaHall.getSeatsSet().split(" ");
+        List<Seat> seatlist = new ArrayList<>();
+
+        for (int k = 0; k < words.length; k++) {
+            for (int i = 0; i < words[k].length(); i++) {
+                if('X' == words[k].charAt(i)){
+                    seatlist.add(Seat.builder()
+                            .row(k)
+                            .column(i)
+                            .cinemaHallEvent(cinemaHallEvent)
+                            .isTaken(((k+i)%3 == 0)? false : true)
+                            .build());
+                }
+            }
+        }
+        cinemaHallEvent.setSeats(seatlist);
+        return cinemaHallEvent;
+    }
+    public Boolean addSeance(SeanceSimpleDto seanceSimpleDto){
+        checkHallAvailable(seanceSimpleDto);
+        CinemaHall cinemaHall = cinemaHallRepository.findById(seanceSimpleDto.getHall_id()).get();
         CinemaHallEvent cinemaHallEvent = CinemaHallEvent.builder()
-                .cinemaHall(cinemaHallRepository.findById(seanceSimpleDto.getHall_id()).get())
+                .cinemaHall(cinemaHall)
                 .build();
+        setSeats(cinemaHallEvent, cinemaHall);
         Seance seance = Seance.builder()
                // .id(seanceSimpleDto.getId())
                 .seanceData(seanceSimpleDto.getDate())
@@ -135,9 +132,9 @@ public class SeanceService {
         cinemaHallEvent.setSeats(seats);
         cinemaHallEvent.setSeance(seanceRepository.getSeanceByCinemaHallEvent(cinemaHallEvent).get());
 
-
-
         cinemaHallEventRepository.save(cinemaHallEvent);
         return true;
     }
+
+
 }

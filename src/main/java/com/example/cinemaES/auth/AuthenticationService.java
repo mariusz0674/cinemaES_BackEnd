@@ -1,10 +1,7 @@
 package com.example.cinemaES.auth;
-
 import com.example.cinemaES.entity.User;
-import com.example.cinemaES.enums.TokenType;
 import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,9 +11,6 @@ import com.example.cinemaES.repository.UserRepository;
 import com.example.cinemaES.security.JwtService;
 import com.example.cinemaES.entity.RefreshToken;
 import com.example.cinemaES.enums.Role;
-
-import java.util.Optional;
-
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +44,7 @@ public class AuthenticationService {
         saveUserToken(savedUser, refreshToken);
         return AuthenticationResponse.builder()
                 .jwttoken(jwtToken)
-                .refreshToken(jwtToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
@@ -64,8 +58,8 @@ public class AuthenticationService {
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
-        revokeAllUserTokens(user);
-        saveUserToken(user, jwtToken);
+        //revokeAllUserTokens(user);
+        saveUserToken(user, refreshToken);
         return AuthenticationResponse.builder()
                 .username(user.getUsername())
                 .role(user.getRole().name())
@@ -74,37 +68,34 @@ public class AuthenticationService {
                 .build();
     }
 
-    private void saveUserToken(User user, String jwtToken) {
+    private void saveUserToken(User user, String refreshToken) {
         var token = RefreshToken.builder()
                 .user(user)
-                .token(jwtToken)
-                .tokenType(TokenType.BEARER)
-                .expired(false)
+                .token(refreshToken)
                 .revoked(false)
                 .build();
         tokenRepository.save(token);
     }
 
-    private void revokeAllUserTokens(User user) {
-        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
-        if (validUserTokens.isEmpty())
-            return;
-        validUserTokens.forEach(refreshToken -> {
-            refreshToken.setExpired(true);
-            refreshToken.setRevoked(true);
-        });
-        tokenRepository.saveAll(validUserTokens);
-    }
+//    private void revokeAllUserTokens(User user) {
+//        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
+//        if (validUserTokens.isEmpty())
+//            return;
+//        validUserTokens.forEach(refreshToken -> {
+//            refreshToken.setExpired(true);
+//            refreshToken.setRevoked(true);
+//        });
+//        tokenRepository.saveAll(validUserTokens);
+//    }
 
     public AuthenticationResponse refreshToken(RefreshTokenRequest request) {
-        RefreshToken refreshToken = RefreshToken.builder()
-                .token(request.getRefreshToken())
-                .build();
-        var user = repository.findByUsername(request.getUserName())
+        var user = repository.findByUsername(request.getUsername())
                 .orElseThrow();
-        if(jwtService.isRefreshTokenValid(request.getUserName(), refreshToken)){
+
+        if(jwtService.isRefreshTokenValid(request.getRefreshToken(), user)){
             return AuthenticationResponse.builder()
                     .jwttoken(jwtService.generateToken(user))
+                    .refreshToken(jwtService.generateRefreshToken(user))
                     .build();
         }
        return null;
