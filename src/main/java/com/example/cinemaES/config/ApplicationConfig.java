@@ -62,5 +62,4 @@ public class ApplicationConfig {
     public AccessDeniedHandler accessDeniedHandler() {
         return new CustomAccessDeniedHandler();
     }
-
 }
