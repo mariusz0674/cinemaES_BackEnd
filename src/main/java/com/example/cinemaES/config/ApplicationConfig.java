@@ -18,14 +18,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.cinemaES.repository.UserRepository;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-
 @Configuration
 @RequiredArgsConstructor
 //@EnableWebSecurity
 public class ApplicationConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final UserRepository repository;
-
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> repository.findByUsername(username)
